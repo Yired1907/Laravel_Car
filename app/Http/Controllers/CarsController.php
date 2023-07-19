@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Car;
+use App\Models\Product;
 
 class CarsController extends Controller
 {
@@ -46,11 +47,14 @@ class CarsController extends Controller
      */
     public function store(Request $request)
     {
-        // $car = new Car;
-        // $car->name = $request->input('name');
-        // $car->founded = $request->input('founded');
-        // $car->description = $request->input('description');
-        // $car->save();
+        $request->validate([
+            'name' => 'required',
+            'founded' => 'required|integer|min:0|max:2021',
+            'description' => 'required'
+        ]);
+
+        //If it's valid, it will process
+        //If it's not valid, throw a validationException
 
         $car = Car::create([
             'name' => $request->input('name'),
@@ -67,6 +71,11 @@ class CarsController extends Controller
     public function show(string $id)
     {
         $car = Car::find($id);
+        // var_dump($car->productionDate);
+        // var_dump($car->production);
+
+        $products = Product::find($id);
+        // print_r($products);
 
         return view('cars.show')->with('car', $car);
     }
@@ -76,7 +85,7 @@ class CarsController extends Controller
      */
     public function edit(string $id)
     {
-        $car = Car::find($id)->first();
+        $car = Car::find($id);
 
         return view('cars.edit')->with('car', $car);
     }
