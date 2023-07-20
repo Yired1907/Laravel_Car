@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateValidationRequest;
 use Illuminate\Http\Request;
 use App\Models\Car;
 use App\Models\Product;
+use App\Rules\Uppercase;
 
 class CarsController extends Controller
 {
@@ -47,19 +49,44 @@ class CarsController extends Controller
      */
     public function store(Request $request)
     {
+        //Methods wee can use on $request
+
+        //guessExtension()
+        //getMimeType()
+        //store()
+        //asStore()
+        //storePublicly()
+        //move()
+        //getClientOriginalName()
+        //getClientMMimeType()
+        //guessClientEExtension()
+        //getSize()
+        //getError()
+        //isValid()
+
+        // $request->file('image')->store();
+
         $request->validate([
             'name' => 'required',
             'founded' => 'required|integer|min:0|max:2021',
-            'description' => 'required'
+            'description' => 'required',
+            'image' => 'required|mimes:png,jpg,jpeg|max:5048'
         ]);
 
+        $originalImageName = $request->image->getClientOriginalName();
+        $newImageName = time() . '-' . $request->name . '.' . 'jpg';
+        $destinationPath = public_path('/images');
+        $request->image->move($destinationPath, $newImageName);
+
+        // dd($newImageName);
         //If it's valid, it will process
         //If it's not valid, throw a validationException
 
         $car = Car::create([
             'name' => $request->input('name'),
             'founded' => $request->input('founded'),
-            'description' => $request->input('description')
+            'description' => $request->input('description'),
+            'image_path' => $newImageName
         ]);
 
         return redirect('/cars');
@@ -93,8 +120,9 @@ class CarsController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(CreateValidationRequest $request, $id)
     {
+        $request->validated();
         $car = Car::where('id', $id)
             ->update([
                 'name' => $request->input('name'),

@@ -10,7 +10,7 @@
     </div>
 
     <div class="flex justify-center ptt-20w">
-        <form action="/cars" method="POST">
+        <form action="/cars" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="block">
                 <input type="text" class="block shadow-5xl mb-10 p-2 w-80 italic placeholder-gray-400" name="name"
@@ -19,6 +19,10 @@
                     placeholder="Fonded ...">
                 <input type="text" class="block shadow-5xl mb-10 p-2 w-80 italic placeholder-gray-400" name="description"
                     placeholder="Descriptions ...">
+
+                {{-- Upload image --}}
+                <input type="file" class="block shadow-5xl mb-10 p-2 w-80 italic placeholder-gray-400" name="image">
+
                 <button type="submit" class="bg-green-500 block shadow-5xl mb-10 p-2 w-80 uppercase font-bold">
                     Submit
                 </button>
